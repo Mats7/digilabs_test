@@ -1,0 +1,22 @@
+{block content}
+    <div class="homeBanner">
+	    <h1 class="mainHeader">Task 2 Data</h1>
+    </div>
+
+    <div class="returnDiv">
+	    <a n:href="Home:default" class="returnLink">Return</a>
+    </div>
+    
+    {foreach $data as $item}
+    <div class="entryDiv">
+            <strong>ID</strong> {$item['id']}
+            <ul><li class="highlightLine"><strong>Name:</strong> {$item['name']}</li></ul>
+            <ul><li><strong>firstNumber:</strong> {$item['firstNumber']}</li></ul>
+            <ul><li><strong>secondNumber:</strong> {$item['secondNumber']}</li></ul>
+            <ul><li><strong>thirdNumber:</strong> {$item['thirdNumber']}</li></ul>
+            <ul><li><strong>Calculation:</strong> {$item['calculation']}</li></ul>
+            <ul><li><strong>Joke:</strong> {$item['joke']}</li></ul>
+            <ul><li><strong>CreatedAt:</strong> {$item['createdAt']}</li></ul>
+    </div>
+    {/foreach}
+{/block}
