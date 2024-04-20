@@ -10,6 +10,31 @@ use Nette\Utils\Json;
 
 final class Task5Presenter extends Nette\Application\UI\Presenter
 {
+    public function checkExpectedResult($operand1, $operand2, $operand3, $operator)
+    {
+        switch ($operator) {
+            case '+':
+                $expectedResult = $operand1 + $operand2;
+                break;
+            case '-':
+                $expectedResult = $operand1 - $operand2;
+                break;
+            case '*':
+                $expectedResult = $operand1 * $operand2;
+                break;
+            case '/':
+                if ($operand2 == 0) {
+                    return false;
+                }
+                $expectedResult = $operand1 / $operand2;
+                break;
+            default:
+                return false;
+        }
+
+        return $expectedResult == $operand3;
+    }
+
     public function checkCalculation($equation)
     {
         // number-operator-number-operator-number (with minus signs or whitespaces)
@@ -26,61 +51,17 @@ final class Task5Presenter extends Nette\Application\UI\Presenter
             //if the first operator is "="
             if($operator1 == '=')
             {
-                $operator = $operator2;
-
-                switch ($operator) {
-                    case '+':
-                        $expectedResult = $operand2 + $operand3;
-                        break;
-                    case '-':
-                        $expectedResult = $operand2 - $operand3;
-                        break;
-                    case '*':
-                        $expectedResult = $operand2 * $operand3;
-                        break;
-                    case '/':
-                        if ($operand3 == 0) {
-                            return false;
-                        }
-                        $expectedResult = $operand2 / $operand3;
-                        break;
-                    default:
-                        return false;
-                }
-    
-                return $expectedResult == $operand1;
+                return Task5Presenter::checkExpectedResult($operand2, $operand3, $operand1, $operator2);
             }
 
             //if the second operator is "="
             if($operator2 == '=')
             {
-                $operator = $operator1;
-
-                switch ($operator) {
-                    case '+':
-                        $expectedResult = $operand1 + $operand2;
-                        break;
-                    case '-':
-                        $expectedResult = $operand1 - $operand2;
-                        break;
-                    case '*':
-                        $expectedResult = $operand1 * $operand2;
-                        break;
-                    case '/':
-                        if ($operand2 == 0) {
-                            return false;
-                        }
-                        $expectedResult = $operand1 / $operand2;
-                        break;
-                    default:
-                        return false;
-                }
-    
-                return $expectedResult == $operand3;
+                return Task5Presenter::checkExpectedResult($operand1, $operand2, $operand3, $operator1);
             }
         }
 
-        return false; 
+        return false;
     }
 
     public function renderDefault(): void
