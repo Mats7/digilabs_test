@@ -5,12 +5,29 @@ declare(strict_types=1);
 namespace App\Presenters;
 
 use Nette;
-use Nette\Utils\Json;
 
 
 final class Task2Presenter extends Nette\Application\UI\Presenter
 {
-    public function checkInitials($fullName)
+    public function renderDefault(): void
+    {
+        $arrayData = JsonDecodePresenter::decodeJson();
+
+        $validItems = [];
+
+        foreach ($arrayData as $item)
+        {
+            if ($this->checkInitials($item['name']))
+            {
+                $validItems[] = $item;
+            }
+        }
+
+        $this->template->data = $validItems;
+    }
+
+    
+    private function checkInitials(string $fullName): bool
     {
         $names = explode(" ", $fullName);
         
@@ -21,28 +38,9 @@ final class Task2Presenter extends Nette\Application\UI\Presenter
         }
     
         //extract initials (surname is the last name)
-        $firstNameInitial = strtoupper(substr($names[0], 0, 1));
-        $lastNameInitial = strtoupper(substr($names[count($names) - 1], 0, 1));
+        $firstNameInitial = strtoupper($names[0][0]);
+        $lastNameInitial = strtoupper($names[count($names) - 1][0]);
     
         return $firstNameInitial === $lastNameInitial;
-    }
-
-    public function renderDefault(): void
-    {
-        $url = 'https://www.digilabs.cz/hiring/data.php';
-        $data = file_get_contents($url);
-        $arrayData = Json::decode($data, Json::FORCE_ARRAY);
-
-        $validItems = [];
-
-        foreach ($arrayData as $item)
-        {
-            if (Task2Presenter::checkInitials($item['name']))
-            {
-                $validItems[] = $item;
-            }
-        }
-
-        $this->template->data = $validItems;
     }
 }

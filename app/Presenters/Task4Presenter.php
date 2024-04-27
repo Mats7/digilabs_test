@@ -5,13 +5,30 @@ declare(strict_types=1);
 namespace App\Presenters;
 
 use Nette;
-use Nette\Utils\Json;
 use \Datetime;
 
 
 final class Task4Presenter extends Nette\Application\UI\Presenter
 {
-    public function checkDate($dateString)
+    public function renderDefault(): void
+    {
+        $arrayData = JsonDecodePresenter::decodeJson();
+
+        $validItems = [];
+
+        foreach ($arrayData as $item)
+        {
+            if ($this->checkDate($item['createdAt']))
+            {
+                $validItems[] = $item;
+            }
+        }
+
+        $this->template->data = $validItems;
+    }
+
+
+    private function checkDate(string $dateString): bool
     {
         //take different formats into account
         $formats = [
@@ -20,9 +37,11 @@ final class Task4Presenter extends Nette\Application\UI\Presenter
         ];
 
         //try to create a date with one of the formats
-        foreach ($formats as $format) {
+        foreach ($formats as $format) 
+        {
             $date = DateTime::createFromFormat($format, $dateString);
-            if ($date !== false) {
+            if ($date !== false) 
+            {
                 break;
             }
         }
@@ -35,26 +54,7 @@ final class Task4Presenter extends Nette\Application\UI\Presenter
 
         $interval = $currentDate->diff($date);
 
-        //check the difference by months and also by days
-        return ($interval->m < 1 || ($interval->m == 1 && $interval->d <= 0));
-    }
-
-    public function renderDefault(): void
-    {
-        $url = 'https://www.digilabs.cz/hiring/data.php';
-        $data = file_get_contents($url);
-        $arrayData = Json::decode($data, Json::FORCE_ARRAY);
-
-        $validItems = [];
-
-        foreach ($arrayData as $item)
-        {
-            if (Task4Presenter::checkDate($item['createdAt']))
-            {
-                $validItems[] = $item;
-            }
-        }
-
-        $this->template->data = $validItems;
+        //check the difference by years, months and days
+        return ($interval->y < 1 && ($interval->m < 1 || ($interval->m == 1 && $interval->d <= 0)));
     }
 }
